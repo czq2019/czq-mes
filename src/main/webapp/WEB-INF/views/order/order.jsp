@@ -5,7 +5,7 @@
 <!-- jsp动态导入 -->
 <jsp:include page="/common/backend_common.jsp" />
 <jsp:include page="/common/page.jsp" />
-<jsp:include page="/template/orderListTemplate.jsp" />
+<jsp:include page="/template/order/orderListTemplate.jsp" />
 <script src="order.js"></script> 
 </head>
 <body class="no-skin" youdao="bind" style="background: white">

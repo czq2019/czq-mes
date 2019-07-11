@@ -26,6 +26,12 @@ public class OrderController {
 	public String orderBatchPage() {
 		return FPATH+"orderBatch";
 	}
+	
+	@RequestMapping("/order.page")
+	public String orderPage() {
+		return FPATH+"order";
+	}
+
 	@ResponseBody
 	@RequestMapping("/insert.json")
 	public JsonData insertAjax(MesOrderVo mesOrderVo) {
