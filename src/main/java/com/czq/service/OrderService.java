@@ -26,7 +26,6 @@ import com.czq.util.MyStringUtils;
 import com.google.common.base.Preconditions;
 
 
-
 @Service
 public class OrderService {
 	@Resource
@@ -35,13 +34,13 @@ public class OrderService {
 	private MesOrderCustomerMapper mesOrderCustomerMapper;
 	@Resource
 	private SqlSession sqlSession;
-	/*@Resource
-	private PlanService planService;*/
+	@Resource
+	private PlanService planService;
 
 	// 一开始就定义一个id生成器
 	private IdGenerator ig = new IdGenerator();
 
-	/*public void batchStart(String ids) {
+	public void batchStart(String ids) {
 		// 144&143--order(id)
 		if (ids != null && ids.length() > 0) {
 			// 批量处理的sqlSession代理
@@ -50,7 +49,7 @@ public class OrderService {
 			// 批量启动待执行计划
 			planService.startPlansByOrderIds(idArray);
 		}
-	}*/
+	}
 
 	// 修改数据
 	public void update(MesOrderVo mesOrderVo) {
@@ -145,7 +144,6 @@ public class OrderService {
 				mesOrder.setOrderOperateTime(new Date());
 				// 批量添加未启动订单
 				if (mesOrder.getOrderStatus() == 1) {
-					System.out.println("1111111111");
 					//planService.prePlan(mesOrder);
 				}
 				mesOrderBatchMapper.insertSelective(mesOrder);
@@ -170,6 +168,47 @@ public class OrderService {
 		List<String> list = ig.initIds(ocounts);
 		ig.clear();
 		return list;
+	}
+
+	// bean:自定义的类，功能适用范围最广
+	// domain-javabean-pojo-po--就是表翻译过来的java类
+	// vo-param poVo xxParam page SearchOrderParam..
+	// dto 用于自定义的与数据层交互的类 SearchOrderDto
+	// SearchOrderParam--SearchOrderVo
+
+	public Object searchPageList(SearchOrderParam param, PageQuery page) {
+		// 验证页码是否为空
+		BeanValidator.check(page);
+		// 将param中的字段传入dto进行数据层的交互
+		// 自定义的数据模型，用来与数据库进行交互操作
+		// searchDto 用于分页的where语句后面
+		SearchOrderDto dto = new SearchOrderDto();
+		// copyparam中的值进入dto
+		if (StringUtils.isNotBlank(param.getKeyword())) {
+			dto.setKeyword("%" + param.getKeyword() + "%");
+		}
+		if (StringUtils.isNotBlank(param.getSearch_status())) {
+			dto.setSearch_status(Integer.parseInt(param.getSearch_status()));
+		}
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			if (StringUtils.isNotBlank(param.getFromTime())) {
+				dto.setFromTime(dateFormat.parse(param.getFromTime()));
+			}
+			if (StringUtils.isNotBlank(param.getToTime())) {
+				dto.setToTime(dateFormat.parse(param.getToTime()));
+			}
+		} catch (Exception e) {
+			throw new ParamException("传入的日期格式有问题，正确格式为：yyyy-MM-dd");
+		}
+
+		int count = mesOrderCustomerMapper.countBySearchDto(dto);
+		if (count > 0) {
+			List<MesOrder> orderList = mesOrderCustomerMapper.getPageListBySearchDto(dto, page);
+			return PageResult.<MesOrder>builder().total(count).data(orderList).build();
+		}
+
+		return PageResult.<MesOrder>builder().build();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,48 +314,5 @@ public class OrderService {
 			return "IdGenerator [ids=" + ids + "]";
 		}
 	}
-
-	// bean:自定义的类，功能适用范围最广
-		// domain-javabean-pojo-po--就是表翻译过来的java类
-		// vo-param poVo xxParam page SearchOrderParam..
-		// dto 用于自定义的与数据层交互的类 SearchOrderDto
-		// SearchOrderParam--SearchOrderVo
-
-		public Object searchPageList(SearchOrderParam param, PageQuery page) {
-			// 验证页码是否为空
-			BeanValidator.check(page);
-			// 将param中的字段传入dto进行数据层的交互
-			// 自定义的数据模型，用来与数据库进行交互操作
-			// searchDto 用于分页的where语句后面
-			SearchOrderDto dto = new SearchOrderDto();
-			// copyparam中的值进入dto
-			if (StringUtils.isNotBlank(param.getKeyword())) {
-				dto.setKeyword("%" + param.getKeyword() + "%");
-			}
-			if (StringUtils.isNotBlank(param.getSearch_status())) {
-				dto.setSearch_status(Integer.parseInt(param.getSearch_status()));
-			}
-			try {
-				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				if (StringUtils.isNotBlank(param.getFromTime())) {
-					dto.setFromTime(dateFormat.parse(param.getFromTime()));
-				}
-				if (StringUtils.isNotBlank(param.getToTime())) {
-					dto.setToTime(dateFormat.parse(param.getToTime()));
-				}
-			} catch (Exception e) {
-				throw new ParamException("传入的日期格式有问题，正确格式为：yyyy-MM-dd");
-			}
-
-			int count = mesOrderCustomerMapper.countBySearchDto(dto);
-			System.out.println(count);
-			if (count > 0) {
-				List<MesOrder> orderList = mesOrderCustomerMapper.getPageListBySearchDto(dto, page);
-				return PageResult.<MesOrder>builder().total(count).data(orderList).build();
-			}
-
-			return PageResult.<MesOrder>builder().build();
-		}
-
 
 }

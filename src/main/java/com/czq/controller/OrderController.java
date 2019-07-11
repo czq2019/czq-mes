@@ -48,11 +48,11 @@ public class OrderController {
 	 }
 	
 		
-	/*//批量启动处理
+	//批量启动处理
 		@ResponseBody
 		@RequestMapping("/orderBatchStart.json")
 		public JsonData orderBatchStart(String ids) {
 			orderService.batchStart(ids);
 			return JsonData.success();
-		}*/
+		}
 }

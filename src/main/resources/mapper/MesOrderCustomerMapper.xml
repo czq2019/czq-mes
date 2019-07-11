@@ -21,29 +21,30 @@
     <result column="order_operate_time" property="orderOperateTime" jdbcType="TIMESTAMP" />
     <result column="order_operate_ip" property="orderOperateIp" jdbcType="VARCHAR" />
   </resultMap>
-   <sql id="Base_Column_List" >
+    <sql id="Base_Column_List" >
     id, order_id, order_clientname, order_productname, order_contractid, order_imgid, 
     order_materialname, order_cometime, order_committime, order_inventorystatus, order_salestatus, 
     order_materialsource, order_hurrystatus, order_status, order_remark, order_operator, 
     order_operate_time, order_operate_ip
   </sql>
-  <select id="getOrderCount" resultType="Long">
+	
+	<select id="getOrderCount" resultType="Long">
 		SELECT
 		COUNT( 1 )
 		FROM
 		mes_order
 	</select>
-  	<update id="batchStart" parameterType="list">
-		  update mes_order set order_status=1
-		  where 
-		  id in
-		  <foreach item="item" index="index" collection="list"
-		      open="(" separator="," close=")">
-		        #{item}
-		  </foreach>
-	</update>
-	
-	  <!-- 以下就是分页版块 -->
+	<!-- 
+	WHERE
+		oid IS NOT NULL and (oid like 'ZX%' or oid like 'zx%');
+	 -->
+	<select id="countBySearchDto" parameterType="map"
+		resultType="int">
+		SELECT count(1)
+		FROM mes_order
+		<include refid="queryConditions" />
+	</select>
+    <!-- 以下就是分页版块 -->
 	<select id="getPageListBySearchDto" parameterType="map"
 		resultMap="BaseResultMap">
 		SELECT
@@ -54,12 +55,15 @@
 		limit #{page.offset}, #{page.pageSize}
 	</select>
 	
-	<select id="countBySearchDto" parameterType="map"
-		resultType="int">
-		SELECT count(1)
-		FROM mes_order
-		<include refid="queryConditions" />
-	</select>
+	<update id="batchStart" parameterType="list">
+		  update mes_order set order_status=1
+		  where 
+		  id in
+		  <foreach item="item" index="index" collection="list"
+		      open="(" separator="," close=")">
+		        #{item}
+		  </foreach>
+	</update>
 	
 	<!-- where：帮助你增加一个where拼接，解下来将第一个出现的and去掉 -->
 	<sql id="queryConditions">
@@ -78,4 +82,9 @@
 			</if>
 		</where>
 	</sql>
+	
+	<select id="selectByOrderId" parameterType="map" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"></include> from mes_order
+		where mes_order.order_id=#{orderid}
+	</select>
 </mapper>
