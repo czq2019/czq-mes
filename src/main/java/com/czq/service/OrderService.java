@@ -11,14 +11,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Service;
 
+import com.czq.beans.PageQuery;
+import com.czq.beans.PageResult;
 import com.czq.dao.MesOrderCustomerMapper;
 import com.czq.dao.MesOrderMapper;
+import com.czq.dto.SearchOrderDto;
+import com.czq.exception.ParamException;
 import com.czq.exception.SysMineException;
 import com.czq.model.MesOrder;
 import com.czq.param.MesOrderVo;
+import com.czq.param.SearchOrderParam;
 import com.czq.util.BeanValidator;
 import com.czq.util.MyStringUtils;
 import com.google.common.base.Preconditions;
+
 
 
 @Service
@@ -166,47 +172,6 @@ public class OrderService {
 		return list;
 	}
 
-	// bean:自定义的类，功能适用范围最广
-	// domain-javabean-pojo-po--就是表翻译过来的java类
-	// vo-param poVo xxParam page SearchOrderParam..
-	// dto 用于自定义的与数据层交互的类 SearchOrderDto
-	// SearchOrderParam--SearchOrderVo
-
-	/*public Object searchPageList(SearchOrderParam param, PageQuery page) {
-		// 验证页码是否为空
-		BeanValidator.check(page);
-		// 将param中的字段传入dto进行数据层的交互
-		// 自定义的数据模型，用来与数据库进行交互操作
-		// searchDto 用于分页的where语句后面
-		SearchOrderDto dto = new SearchOrderDto();
-		// copyparam中的值进入dto
-		if (StringUtils.isNotBlank(param.getKeyword())) {
-			dto.setKeyword("%" + param.getKeyword() + "%");
-		}
-		if (StringUtils.isNotBlank(param.getSearch_status())) {
-			dto.setSearch_status(Integer.parseInt(param.getSearch_status()));
-		}
-		try {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			if (StringUtils.isNotBlank(param.getFromTime())) {
-				dto.setFromTime(dateFormat.parse(param.getFromTime()));
-			}
-			if (StringUtils.isNotBlank(param.getToTime())) {
-				dto.setToTime(dateFormat.parse(param.getToTime()));
-			}
-		} catch (Exception e) {
-			throw new ParamException("传入的日期格式有问题，正确格式为：yyyy-MM-dd");
-		}
-
-		int count = mesOrderCustomerMapper.countBySearchDto(dto);
-		if (count > 0) {
-			List<MesOrder> orderList = mesOrderCustomerMapper.getPageListBySearchDto(dto, page);
-			return PageResult.<MesOrder>builder().total(count).data(orderList).build();
-		}
-
-		return PageResult.<MesOrder>builder().build();
-	}
-*/
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	// 1 默认生成代码
 	// 2 手工生成代码
@@ -311,6 +276,47 @@ public class OrderService {
 		}
 	}
 
+	// bean:自定义的类，功能适用范围最广
+		// domain-javabean-pojo-po--就是表翻译过来的java类
+		// vo-param poVo xxParam page SearchOrderParam..
+		// dto 用于自定义的与数据层交互的类 SearchOrderDto
+		// SearchOrderParam--SearchOrderVo
+
+		public Object searchPageList(SearchOrderParam param, PageQuery page) {
+			// 验证页码是否为空
+			BeanValidator.check(page);
+			// 将param中的字段传入dto进行数据层的交互
+			// 自定义的数据模型，用来与数据库进行交互操作
+			// searchDto 用于分页的where语句后面
+			SearchOrderDto dto = new SearchOrderDto();
+			// copyparam中的值进入dto
+			if (StringUtils.isNotBlank(param.getKeyword())) {
+				dto.setKeyword("%" + param.getKeyword() + "%");
+			}
+			if (StringUtils.isNotBlank(param.getSearch_status())) {
+				dto.setSearch_status(Integer.parseInt(param.getSearch_status()));
+			}
+			try {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				if (StringUtils.isNotBlank(param.getFromTime())) {
+					dto.setFromTime(dateFormat.parse(param.getFromTime()));
+				}
+				if (StringUtils.isNotBlank(param.getToTime())) {
+					dto.setToTime(dateFormat.parse(param.getToTime()));
+				}
+			} catch (Exception e) {
+				throw new ParamException("传入的日期格式有问题，正确格式为：yyyy-MM-dd");
+			}
+
+			int count = mesOrderCustomerMapper.countBySearchDto(dto);
+			System.out.println(count);
+			if (count > 0) {
+				List<MesOrder> orderList = mesOrderCustomerMapper.getPageListBySearchDto(dto, page);
+				return PageResult.<MesOrder>builder().total(count).data(orderList).build();
+			}
+
+			return PageResult.<MesOrder>builder().build();
+		}
 
 
 }

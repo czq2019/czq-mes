@@ -4,7 +4,7 @@
     <title>订单管理</title>
     <jsp:include page="/common/backend_common.jsp"/>
     <jsp:include page="/common/page.jsp"/>
-	<jsp:include page="/template/order/orderBatchTemplate.jsp"/> 
+	<jsp:include page="/template/order/orderBatchListTemplate.jsp"/> 
 </head>
 <body class="no-skin" youdao="bind" style="background: white">
 	<input id="gritter-light" checked="" type="checkbox"
@@ -97,6 +97,7 @@
     </div>
 </div>
 <%@ include file="orderBatchForm.jsp" %>
+<%@ include file="orderUpdateForm.jsp" %>
 <script type="text/javascript" src="orderBatch.js"></script>
 </body>
 </html>

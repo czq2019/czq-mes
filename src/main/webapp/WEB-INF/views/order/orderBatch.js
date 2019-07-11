@@ -30,7 +30,7 @@ $(function() {
 				}
 			});
 	
-			/*$(".batchStart-th").click(function(){
+			$(".batchStart-th").click(function(){
 				var checks=$(".batchStart-check");
 				$.each(checks,function(i,input){
 					//状态反选
@@ -40,7 +40,7 @@ $(function() {
 					//true-false  false-true  使用三目运算符
 					input.checked=input.checked==true?false:true;
 				});
-			});*/
+			});
 ///////////////////////////////////////////////////////////////////////////
 			//页面开始加载
 			//执行分页逻辑
@@ -293,7 +293,6 @@ $(function() {
 		//isCreate是否是新增订单(true,false)，如果不是，执行修改
 		//successCallbak function(data)  failCallbak function(data)
 		function updateOrder(isCreate, successCallbak, failCallbak) {
-			//alert("测试点击添加事件");
 			$.ajax({
 				url : isCreate ? "/order/insert.json"
 						: "/order/update.json",
