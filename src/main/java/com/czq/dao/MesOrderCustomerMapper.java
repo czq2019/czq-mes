@@ -17,6 +17,8 @@ public interface MesOrderCustomerMapper {
 	int countBySearchDto(@Param("dto") SearchOrderDto dto);
 
 	List<MesOrder> getPageListBySearchDto(@Param("dto") SearchOrderDto dto, @Param("page") PageQuery page);
+	//plan
+	MesOrder selectByOrderId(@Param("orderid")String orderid);
 
 
 }

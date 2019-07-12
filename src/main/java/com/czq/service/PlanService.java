@@ -11,10 +11,23 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.czq.beans.PageQuery;
 import com.czq.beans.PageResult;
 import com.czq.dao.MesOrderCustomerMapper;
 import com.czq.dao.MesOrderMapper;
+import com.czq.dao.MesPlanCustomerMapper;
+import com.czq.dao.MesPlanMapper;
+import com.czq.dao.MesProductMapper;
+import com.czq.dto.SearchPlanDto;
+import com.czq.exception.ParamException;
 import com.czq.model.MesOrder;
+import com.czq.model.MesPlan;
+import com.czq.model.MesProduct;
+import com.czq.param.MesPlanVo;
+import com.czq.param.SearchPlanParam;
+import com.czq.util.BeanValidator;
+import com.czq.util.MyStringUtils;
+import com.czq.util.UUIDUtil;
 import com.google.common.base.Preconditions;
 
 
@@ -24,12 +37,12 @@ public class PlanService {
 	private MesOrderMapper mesOrderMapper;
 	@Resource
 	private MesOrderCustomerMapper mesOrderCustomerMapper;
-	/*@Resource
+	@Resource
 	private MesPlanMapper mesPlanMapper;
 	@Resource
 	private MesPlanCustomerMapper mesPlanCustomerMapper;
 	@Resource
-	private MesProductMapper mesProductMapper;*/
+	private MesProductMapper mesProductMapper;
 	@Resource
 	private SqlSession sqlSession;
 	
@@ -44,7 +57,7 @@ public class PlanService {
 		}
 	}
 	
-	/*//创建为启动计划
+	//创建为启动计划
 	public void prePlan(MesOrder mesOrder) {
 		// 批量处理
 		MesPlanMapper planMapper = sqlSession.getMapper(MesPlanMapper.class);
@@ -57,9 +70,9 @@ public class PlanService {
 		mesPlan.setPlanOperateIp("127.0.0.1");
 		mesPlan.setPlanOperateTime(new Date());
 		planMapper.insertSelective(mesPlan);
-	}*/
+	}
 	
-/*	//启动计划
+	//启动计划
 	public void batchStartWithIds(String ids) {
 		if(ids!=null&&ids.length()>0) {
 			//批量处理
@@ -98,8 +111,8 @@ public class PlanService {
 				mesProductMapper.insertSelective(mesProduct);
 			}
 		}
-	}*/
-	/*//计划分页
+	}
+	//计划分页
 	public PageResult<MesPlan> searchPageList(SearchPlanParam param, PageQuery page) {
 		// 验证页码是否为空
 		BeanValidator.check(page);
@@ -134,8 +147,10 @@ public class PlanService {
 			return PageResult.<MesPlan>builder().total(count).data(planList).build();
 		}
 		return PageResult.<MesPlan>builder().build();
-	}*/
+	}
 /*
+  
+ */
 	public void update(MesPlanVo mesPlanVo) {
 		BeanValidator.check(mesPlanVo);
 		MesPlan mesPlan=new MesPlan();
@@ -148,6 +163,6 @@ public class PlanService {
 		mesPlan.setPlanOperateIp("127.0.0.1");
 		mesPlan.setPlanOperateTime(new Date());
 		mesPlanMapper.updateByPrimaryKeySelective(mesPlan);
-	}*/
+	}
 
 }
