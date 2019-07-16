@@ -2,7 +2,6 @@
 <html>
 <head>
 <title>订单查询</title>
-<!-- jsp动态导入 -->
 <jsp:include page="/common/backend_common.jsp" />
 <jsp:include page="/common/page.jsp" />
 <jsp:include page="/template/order/orderListTemplate.jsp" />

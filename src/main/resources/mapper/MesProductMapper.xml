@@ -13,6 +13,7 @@
     <result column="product_bakweight" property="productBakweight" jdbcType="REAL" />
     <result column="product_irontype" property="productIrontype" jdbcType="VARCHAR" />
     <result column="product_irontypeweight" property="productIrontypeweight" jdbcType="REAL" />
+    <result column="product_heatnum" property="productHeatnum" jdbcType="VARCHAR" />
     <result column="product_materialname" property="productMaterialname" jdbcType="VARCHAR" />
     <result column="product_imgid" property="productImgid" jdbcType="VARCHAR" />
     <result column="product_materialsource" property="productMaterialsource" jdbcType="VARCHAR" />
@@ -25,8 +26,8 @@
   <sql id="Base_Column_List" >
     id, p_id, product_id, product_orderid, product_planid, product_targetweight, product_realweight, 
     product_leftweight, product_bakweight, product_irontype, product_irontypeweight, 
-    product_materialname, product_imgid, product_materialsource, product_status, product_remark, 
-    product_operator, product_operate_time, product_operate_ip
+    product_heatnum, product_materialname, product_imgid, product_materialsource, product_status, 
+    product_remark, product_operator, product_operate_time, product_operate_ip
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -42,17 +43,17 @@
     insert into mes_product (id, p_id, product_id, 
       product_orderid, product_planid, product_targetweight, 
       product_realweight, product_leftweight, product_bakweight, 
-      product_irontype, product_irontypeweight, product_materialname, 
-      product_imgid, product_materialsource, product_status, 
-      product_remark, product_operator, product_operate_time, 
-      product_operate_ip)
+      product_irontype, product_irontypeweight, product_heatnum, 
+      product_materialname, product_imgid, product_materialsource, 
+      product_status, product_remark, product_operator, 
+      product_operate_time, product_operate_ip)
     values (#{id,jdbcType=INTEGER}, #{pId,jdbcType=INTEGER}, #{productId,jdbcType=VARCHAR}, 
       #{productOrderid,jdbcType=INTEGER}, #{productPlanid,jdbcType=INTEGER}, #{productTargetweight,jdbcType=REAL}, 
       #{productRealweight,jdbcType=REAL}, #{productLeftweight,jdbcType=REAL}, #{productBakweight,jdbcType=REAL}, 
-      #{productIrontype,jdbcType=VARCHAR}, #{productIrontypeweight,jdbcType=REAL}, #{productMaterialname,jdbcType=VARCHAR}, 
-      #{productImgid,jdbcType=VARCHAR}, #{productMaterialsource,jdbcType=VARCHAR}, #{productStatus,jdbcType=INTEGER}, 
-      #{productRemark,jdbcType=VARCHAR}, #{productOperator,jdbcType=VARCHAR}, #{productOperateTime,jdbcType=TIMESTAMP}, 
-      #{productOperateIp,jdbcType=VARCHAR})
+      #{productIrontype,jdbcType=VARCHAR}, #{productIrontypeweight,jdbcType=REAL}, #{productHeatnum,jdbcType=VARCHAR}, 
+      #{productMaterialname,jdbcType=VARCHAR}, #{productImgid,jdbcType=VARCHAR}, #{productMaterialsource,jdbcType=VARCHAR}, 
+      #{productStatus,jdbcType=INTEGER}, #{productRemark,jdbcType=VARCHAR}, #{productOperator,jdbcType=VARCHAR}, 
+      #{productOperateTime,jdbcType=TIMESTAMP}, #{productOperateIp,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.czq.model.MesProduct" >
     insert into mes_product
@@ -89,6 +90,9 @@
       </if>
       <if test="productIrontypeweight != null" >
         product_irontypeweight,
+      </if>
+      <if test="productHeatnum != null" >
+        product_heatnum,
       </if>
       <if test="productMaterialname != null" >
         product_materialname,
@@ -149,6 +153,9 @@
       <if test="productIrontypeweight != null" >
         #{productIrontypeweight,jdbcType=REAL},
       </if>
+      <if test="productHeatnum != null" >
+        #{productHeatnum,jdbcType=VARCHAR},
+      </if>
       <if test="productMaterialname != null" >
         #{productMaterialname,jdbcType=VARCHAR},
       </if>
@@ -208,6 +215,9 @@
       <if test="productIrontypeweight != null" >
         product_irontypeweight = #{productIrontypeweight,jdbcType=REAL},
       </if>
+      <if test="productHeatnum != null" >
+        product_heatnum = #{productHeatnum,jdbcType=VARCHAR},
+      </if>
       <if test="productMaterialname != null" >
         product_materialname = #{productMaterialname,jdbcType=VARCHAR},
       </if>
@@ -247,6 +257,7 @@
       product_bakweight = #{productBakweight,jdbcType=REAL},
       product_irontype = #{productIrontype,jdbcType=VARCHAR},
       product_irontypeweight = #{productIrontypeweight,jdbcType=REAL},
+      product_heatnum = #{productHeatnum,jdbcType=VARCHAR},
       product_materialname = #{productMaterialname,jdbcType=VARCHAR},
       product_imgid = #{productImgid,jdbcType=VARCHAR},
       product_materialsource = #{productMaterialsource,jdbcType=VARCHAR},

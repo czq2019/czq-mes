@@ -46,17 +46,16 @@ public class PlanService {
 	@Resource
 	private SqlSession sqlSession;
 	
-	//批量启动order后的批量plan启动
 	public void startPlansByOrderIds(String[] ids) {
 		for(String tempId:ids) {
 			Integer id=Integer.parseInt(tempId);
 			MesOrder order=mesOrderMapper.selectByPrimaryKey(id);
-			//查询内容非空 ，使用google的guava工具类
 			Preconditions.checkNotNull(order);
-			//prePlan(order);
+			prePlan(order);
 		}
 	}
 	
+
 	//创建为启动计划
 	public void prePlan(MesOrder mesOrder) {
 		// 批量处理
@@ -73,54 +72,49 @@ public class PlanService {
 	}
 	
 	//启动计划
-	public void batchStartWithIds(String ids) {
-		if(ids!=null&&ids.length()>0) {
-			//批量处理
-			MesPlanMapper mapper=sqlSession.getMapper(MesPlanMapper.class);
-			//考虑到需要判断一下id是否为空,执行自定义update语句
-			//批处理
-			String[] strs=ids.split(",");
-			String[] idsTemp=strs[0].split("&");
-			String[] datesTemp=strs[1].split("&");
-			String startTime=datesTemp[0];
-			String endTime=datesTemp[1];
-			for(int i=0;i<idsTemp.length;i++) {
-				MesPlan mesPlan=new MesPlan();
-				mesPlan.setId(Integer.parseInt(idsTemp[i]));
-				mesPlan.setPlanWorkstarttime(MyStringUtils.string2Date(startTime,null));
-				mesPlan.setPlanWorkendtime(MyStringUtils.string2Date(endTime,null));
-				mesPlan.setPlanStatus(1);
-				mesPlan.setPlanCurrentremark("计划已启动");
-				mapper.updateByPrimaryKeySelective(mesPlan);
-				
-				//半成品材料 生成
-				MesPlan plan=mesPlanMapper.selectByPrimaryKey(Integer.parseInt(idsTemp[i]));
-				//产生半成品材料
-				String orderid=plan.getPlanOrderid();
-				MesOrder order=mesOrderCustomerMapper.selectByOrderId(orderid);
-				//product
-				MesProduct mesProduct=MesProduct.builder().productId(UUIDUtil.generateUUID())//
-						.productOrderid(order.getId()).productPlanid(plan.getId())//
-						.productMaterialname(order.getOrderMaterialname())//
-						.productImgid(order.getOrderImgid())//
-						.productMaterialsource(order.getOrderMaterialsource())//\
-						.productStatus(0).build();
-				mesProduct.setProductOperateIp("127.0.0.1");
-				mesProduct.setProductOperator("user01");
-				mesProduct.setProductOperateTime(new Date());
-				mesProductMapper.insertSelective(mesProduct);
+		public void batchStartWithIds(String ids) {
+			if(ids!=null&&ids.length()>0) {
+				//批量处理
+				MesPlanMapper mapper=sqlSession.getMapper(MesPlanMapper.class);
+				//考虑到需要判断一下id是否为空,执行自定义update语句
+				//批处理
+				String[] strs=ids.split(",");
+				String[] idsTemp=strs[0].split("&");
+				String[] datesTemp=strs[1].split("&");
+				String startTime=datesTemp[0];
+				String endTime=datesTemp[1];
+				for(int i=0;i<idsTemp.length;i++) {
+					MesPlan mesPlan=new MesPlan();
+					mesPlan.setId(Integer.parseInt(idsTemp[i]));
+					mesPlan.setPlanWorkstarttime(MyStringUtils.string2Date(startTime,null));
+					mesPlan.setPlanWorkendtime(MyStringUtils.string2Date(endTime,null));
+					mesPlan.setPlanStatus(1);
+					mesPlan.setPlanCurrentremark("计划已启动");
+					mapper.updateByPrimaryKeySelective(mesPlan);
+					
+					//半成品材料 生成
+					MesPlan plan=mesPlanMapper.selectByPrimaryKey(Integer.parseInt(idsTemp[i]));
+					//产生半成品材料
+					String orderid=plan.getPlanOrderid();
+					MesOrder order=mesOrderCustomerMapper.selectByOrderId(orderid);
+					//product
+					MesProduct mesProduct=MesProduct.builder().productId(UUIDUtil.generateUUID())//
+							.productOrderid(order.getId()).productPlanid(plan.getId())//
+							.productMaterialname(order.getOrderMaterialname())//
+							.productImgid(order.getOrderImgid())//
+							.productMaterialsource(order.getOrderMaterialsource())//\
+							.productStatus(0).build();
+					mesProduct.setProductOperateIp("127.0.0.1");
+					mesProduct.setProductOperator("user01");
+					mesProduct.setProductOperateTime(new Date());
+					mesProductMapper.insertSelective(mesProduct);
+				}
 			}
 		}
-	}
-	//计划分页
 	public PageResult<MesPlan> searchPageList(SearchPlanParam param, PageQuery page) {
-		// 验证页码是否为空
 		BeanValidator.check(page);
-		// 将param中的字段传入dto进行数据层的交互
-		// 自定义的数据模型，用来与数据库进行交互操作
-		// searchDto 用于分页的where语句后面
 		SearchPlanDto dto = new SearchPlanDto();
-		// copyparam中的值进入dto
+		// copyparamto
 		if (StringUtils.isNotBlank(param.getKeyword())) {
 			dto.setKeyword("%" + param.getKeyword() + "%");
 		}
@@ -139,7 +133,7 @@ public class PlanService {
 				dto.setToTime(dateFormat.parse(param.getToTime()));
 			}
 		} catch (Exception e) {
-			throw new ParamException("传入的日期格式有问题，正确格式为：yyyy-MM-dd");
+			throw new ParamException("日期格式不对，yyyy-MM-dd");
 		}
 		int count = mesPlanCustomerMapper.countBySearchDto(dto);
 		if (count > 0) {

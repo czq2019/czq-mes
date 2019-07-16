@@ -279,7 +279,7 @@ public class OrderService {
 		//
 		private String getIdAfter(int addcount) {
 			// 系统默认生成5位 ZX1700001
-			int goallength = 5;
+			int goallength = 7;
 			// 获取数据库order的总数量+1+循环次数(addcount)
 			int count = this.currentdbidscount.intValue() + 1 + addcount;
 			StringBuilder sBuilder = new StringBuilder("");
@@ -294,7 +294,7 @@ public class OrderService {
 
 		private String getIdPre() {
 			// idpre==null?this.idpre="ZX":this.idpre=idpre;
-			this.idpre = "ZX";
+			this.idpre = "ZX_P_";
 			return this.idpre;
 		}
 

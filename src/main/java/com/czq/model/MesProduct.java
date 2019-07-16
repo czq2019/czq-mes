@@ -5,9 +5,10 @@ import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-@Builder
+
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class MesProduct {
     private Integer id;
 
@@ -30,6 +31,8 @@ public class MesProduct {
     private String productIrontype;
 
     private Float productIrontypeweight;
+
+    private String productHeatnum;
 
     private String productMaterialname;
 
@@ -133,6 +136,14 @@ public class MesProduct {
 
     public void setProductIrontypeweight(Float productIrontypeweight) {
         this.productIrontypeweight = productIrontypeweight;
+    }
+
+    public String getProductHeatnum() {
+        return productHeatnum;
+    }
+
+    public void setProductHeatnum(String productHeatnum) {
+        this.productHeatnum = productHeatnum == null ? null : productHeatnum.trim();
     }
 
     public String getProductMaterialname() {
